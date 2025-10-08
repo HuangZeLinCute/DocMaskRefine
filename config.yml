@@ -1,0 +1,61 @@
+VERBOSE: True
+
+MODEL:
+  SESSION: 'Kligler'
+  INPUT: 'input'
+  TARGET: 'target'
+  USE_DOCUMENT_BOUNDARY: true
+  USE_DISCRIMINATOR: false
+  USE_BLACKEDGE_SUPPRESSOR: false
+  USE_BACKGROUND_REFERENCE: false
+
+OPTIM:
+  BATCH_SIZE: 1
+  NUM_EPOCHS: 300
+  LR_INITIAL: 2e-4
+  LR_MIN: 1e-6
+  SEED: 3407
+  WANDB: False
+  DISCRIMINATOR_LR: 5e-5
+  ADVERSARIAL_WEIGHT: 0.05
+  DISCRIMINATOR_START_EPOCH: 10
+
+TRAINING:
+  VAL_AFTER_EVERY: 1
+  PS_W: 512
+  PS_H: 512
+  TRAIN_DIR: './dataset/RDD/train'
+  VAL_DIR: './dataset/Kligler/test'
+  SAVE_DIR: './checkpoints/RDD/models/base'
+  ORI: False
+  RESUME: ''
+  NUM_WORKERS: 16
+  VAL_BATCH_SIZE: 4
+  VAL_NUM_WORKERS: 4
+  PATIENCE: 20
+
+LOSS:
+  TYPE: 'CUSTOM'
+  CONFIGS:
+    CUSTOM:
+      MSE_WEIGHT: 1.0
+      SSIM_WEIGHT: 0.3
+      EDGE_WEIGHT: 0.7
+      GRADIENT_WEIGHT: 0.4
+      BOUNDARY_WEIGHT: 0.9
+      PERCEPTUAL_WEIGHT: 0.2
+      HISTOGRAM_WEIGHT: 0.2
+      TRANSPARENCY_WEIGHT: 0.1
+
+LOSS_SCHEDULER:
+  ENABLE: true
+  PRESET: 'shadow_removal'
+  ADAPTIVE_PATIENCE: 5
+  ADAPTIVE_FACTOR: 0.8
+  VERBOSE: true
+
+TESTING:
+  WEIGHT: "./checkpoints/Kligler/models/base/Kligler_epoch_43.pth"
+  SAVE_IMAGES: True
+  BATCH_SIZE: 4
+  NUM_WORKERS: 4

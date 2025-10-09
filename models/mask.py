@@ -2,8 +2,6 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 import einops
-from models.EA import EdgeAwareLayer
-
 
 # ========================
 # LayerNorm (BiasFree / WithBias)

@@ -152,7 +152,7 @@ def train():
         os.makedirs(opt.TRAINING.SAVE_DIR, exist_ok=True)
 
     # 数据加载
-    train_dataset = get_data(opt.TRAINING.TRAIN_DIR, opt.MODEL.INPUT, opt.MODEL.TARGET, 'train', opt.TRAINING.ORI,
+    train_dataset = get_data(opt.TRAINING.TRAIN_DIR, opt.MODEL.INPUT, opt.MODEL.TARGET, 'test', opt.TRAINING.ORI,
                              {'w': opt.TRAINING.PS_W, 'h': opt.TRAINING.PS_H})
     trainloader = DataLoader(dataset=train_dataset, batch_size=opt.OPTIM.BATCH_SIZE, shuffle=True,
                              num_workers=opt.TRAINING.NUM_WORKERS, drop_last=False, pin_memory=True)
@@ -268,6 +268,18 @@ def train():
 
     # 记录指标
     epoch_list, psnr_list, ssim_list, rmse_list = [], [], [], []
+    
+    # 创建或打开RMSE记录文件
+    rmse_log_path = os.path.join(opt.TRAINING.SAVE_DIR, f"{opt.MODEL.SESSION}_rmse_log.txt")
+    if accelerator.is_local_main_process:
+        # 如果是断点续训，追加模式；否则新建文件
+        log_mode = 'a' if (resume_path and os.path.exists(resume_path)) else 'w'
+        with open(rmse_log_path, log_mode) as f:
+            if log_mode == 'w':
+                f.write("Epoch,PSNR,SSIM,RMSE\n")  # 写入表头
+            else:
+                f.write(f"\n# Resumed training from epoch {start_epoch}\n")
+        print(f"📝 RMSE日志将保存到: {rmse_log_path}")
 
     try:
         for epoch in range(start_epoch, opt.OPTIM.NUM_EPOCHS + 1):
@@ -377,6 +389,10 @@ def train():
                         output_str += f"\n   📊 当前损失权重: {weights_str}"
                     
                     print(output_str)
+                    
+                    # 记录RMSE到文件
+                    with open(rmse_log_path, 'a') as f:
+                        f.write(f"{epoch},{psnr:.6f},{ssim:.6f},{rmse:.6f}\n")
 
     except KeyboardInterrupt:
         print("\n==> 训练停止，开始保存指标图 ...")

@@ -51,9 +51,7 @@ def test():
     )
 
     # Model & Metrics
-    model = Model(use_document_boundary=opt.MODEL.USE_DOCUMENT_BOUNDARY,
-                  use_blackedge_suppressor=opt.MODEL.USE_BLACKEDGE_SUPPRESSOR,
-                  use_background_reference=opt.MODEL.USE_BACKGROUND_REFERENCE)
+    model = Model(use_document_boundary=opt.MODEL.USE_DOCUMENT_BOUNDARY)
     load_checkpoint(model, opt.TESTING.WEIGHT)
 
     model, testloader = accelerator.prepare(model, testloader)

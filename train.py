@@ -209,12 +209,50 @@ def train():
     if resume_path and os.path.exists(resume_path):
         print(f"=> 加载checkpoint: {resume_path}")
         checkpoint = torch.load(resume_path, map_location="cpu")
-        model.load_state_dict(checkpoint['state_dict'])
+
+        state_dict = checkpoint['state_dict']
+        # 如果有 "module." 前缀，则去掉
+        new_state_dict = {}
+        for k, v in state_dict.items():
+            if k.startswith("module."):
+                new_state_dict[k[len("module."):]] = v
+            else:
+                new_state_dict[k] = v
+
+        # 加载修改后的 state_dict
+        model.load_state_dict(new_state_dict)
+
+        
         if 'optimizer_state_dict' in checkpoint:
             optimizer_b.load_state_dict(checkpoint['optimizer_state_dict'])
             start_epoch = checkpoint.get('epoch', 0) + 1
             best_rmse = checkpoint.get('best_rmse', best_rmse)
             best_epoch = checkpoint.get('best_epoch', best_epoch)
+            
+            # 恢复损失调度器状态
+            if loss_scheduler is not None:
+                if 'loss_scheduler_state' in checkpoint:
+                    # 从checkpoint恢复调度器状态
+                    try:
+                        loss_scheduler.current_weights = checkpoint['loss_scheduler_state']['current_weights']
+                        loss_scheduler.best_metric = checkpoint['loss_scheduler_state']['best_metric']
+                        loss_scheduler.patience_counter = checkpoint['loss_scheduler_state']['patience_counter']
+                        loss_scheduler.metric_history = checkpoint['loss_scheduler_state']['metric_history']
+                        print(f"✅ 损失调度器状态已从checkpoint恢复")
+                    except Exception as e:
+                        print(f"⚠️  损失调度器状态恢复失败: {e}")
+                else:
+                    # 旧checkpoint没有调度器状态，根据当前epoch推断应有的权重
+                    print(f"ℹ️  旧checkpoint未包含调度器状态，根据epoch {start_epoch-1} 推断权重...")
+                    inferred_weights = loss_scheduler.step(start_epoch - 1, best_rmse)
+                    loss_scheduler.current_weights = inferred_weights
+                    criterion.update_weights(inferred_weights)
+                    print(f"✅ 调度器权重已推断并应用")
+                    
+                    # 打印推断的权重
+                    weights_str = ", ".join([f"{k}:{v:.3f}" for k, v in inferred_weights.items()])
+                    print(f"   📊 推断的损失权重: {weights_str}")
+            
             print(f"=> 从第 {start_epoch} 轮继续训练 (best_rmse={best_rmse:.4f}, best_epoch={best_epoch})")
         else:
             print("=> 只找到模型参数，将以fine-tune模式从头训练优化器")
@@ -293,13 +331,24 @@ def train():
                 
                 # 保存模型 & 早停
                 if should_save:
-                    save_checkpoint({
+                    checkpoint_data = {
                         'state_dict': model.state_dict(),
                         'optimizer_state_dict': optimizer_b.state_dict(),
                         'epoch': epoch,
                         'best_rmse': min(rmse, best_rmse),
                         'best_epoch': epoch if rmse < best_rmse else best_epoch,
-                    }, epoch, opt.MODEL.SESSION, opt.TRAINING.SAVE_DIR)
+                    }
+                    
+                    # 保存损失调度器状态
+                    if loss_scheduler is not None:
+                        checkpoint_data['loss_scheduler_state'] = {
+                            'current_weights': loss_scheduler.current_weights,
+                            'best_metric': loss_scheduler.best_metric,
+                            'patience_counter': loss_scheduler.patience_counter,
+                            'metric_history': loss_scheduler.metric_history
+                        }
+                    
+                    save_checkpoint(checkpoint_data, epoch, opt.MODEL.SESSION, opt.TRAINING.SAVE_DIR)
                 
                 # 更新最佳记录
                 if rmse < best_rmse:

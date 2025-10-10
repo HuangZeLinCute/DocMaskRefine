@@ -7,13 +7,12 @@ from models.refine import RefineUNetCoord
 
 
 class Model(nn.Module):
-    def __init__(self, use_document_boundary=True):
+    def __init__(self):
         super(Model, self).__init__()
 
         self.mask = RestormerMask()
 
-        self.refine = RefineUNetCoord(bilinear=True, 
-                                     use_document_boundary=use_document_boundary)
+        self.refine = RefineUNetCoord(bilinear=True)
 
     def forward(self, bin_x, x):
         """

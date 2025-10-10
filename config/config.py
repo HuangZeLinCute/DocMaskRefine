@@ -62,10 +62,6 @@ class Config(object):
         self._C.MODEL.SESSION = 'SR'
         self._C.MODEL.INPUT = 'input'
         self._C.MODEL.TARGET = 'target'
-        self._C.MODEL.USE_DOCUMENT_BOUNDARY = True  # 启用文档边界注意力模块
-        self._C.MODEL.USE_DISCRIMINATOR = True      # 启用GAN判别器
-        self._C.MODEL.USE_BLACKEDGE_SUPPRESSOR = True  # 启用黑边抑制模块
-        self._C.MODEL.USE_BACKGROUND_REFERENCE = True  # 启用背景参考引导模块
 
         self._C.OPTIM = CN()
         self._C.OPTIM.BATCH_SIZE = 1
@@ -76,11 +72,6 @@ class Config(object):
         self._C.OPTIM.LR_MIN = 0.0002
         self._C.OPTIM.BETA1 = 0.5
         self._C.OPTIM.WANDB = False
-        
-        # GAN训练相关参数
-        self._C.OPTIM.DISCRIMINATOR_LR = 0.0001     # 判别器学习率
-        self._C.OPTIM.ADVERSARIAL_WEIGHT = 0.1      # 对抗损失权重
-        self._C.OPTIM.DISCRIMINATOR_START_EPOCH = 5  # 判别器开始训练的epoch
 
         self._C.TRAINING = CN()
         self._C.TRAINING.VAL_AFTER_EVERY = 3

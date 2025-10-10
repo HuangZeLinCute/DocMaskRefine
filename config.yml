@@ -4,7 +4,6 @@ MODEL:
   SESSION: 'Kligler'
   INPUT: 'input'
   TARGET: 'target'
-  USE_DOCUMENT_BOUNDARY: true
 
 OPTIM:
   BATCH_SIZE: 2

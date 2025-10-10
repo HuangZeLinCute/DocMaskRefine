@@ -163,7 +163,7 @@ def train():
                             num_workers=opt.TRAINING.VAL_NUM_WORKERS, drop_last=False, pin_memory=True)
 
     # 模型与损失
-    model = Model(use_document_boundary=opt.MODEL.USE_DOCUMENT_BOUNDARY)
+    model = Model()
     
     # 从config获取损失配置
     loss_config = opt.get_loss_config()

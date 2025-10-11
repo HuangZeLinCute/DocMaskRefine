@@ -2,17 +2,17 @@ import torch
 import torch.nn as nn
 import torchvision.transforms.functional as TF
 from PIL import Image
-from models.mask import RestormerMask
-from models.refine import RefineUNetCoord
+from models.mask import AdaptiveShadowMaskGenerator
+from models.refine import DocumentAwareRefinementNetwork
 
 
 class Model(nn.Module):
     def __init__(self):
         super(Model, self).__init__()
 
-        self.mask = RestormerMask()
+        self.mask = AdaptiveShadowMaskGenerator()
 
-        self.refine = RefineUNetCoord(bilinear=True)
+        self.refine = DocumentAwareRefinementNetwork(bilinear=True)
 
     def forward(self, bin_x, x):
         """

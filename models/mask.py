@@ -3,6 +3,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 import einops
 
+
 # ========================
 # LayerNorm (BiasFree / WithBias)
 # ========================
@@ -172,11 +173,11 @@ class MaskPredictor(nn.Module):
 
 
 # ========================
-# RestormerMask
+# AdaptiveShadowMaskGenerator
 # ========================
-class RestormerMask(nn.Module):
+class AdaptiveShadowMaskGenerator(nn.Module):
     def __init__(self, base_dim=32, num_blocks=4, num_heads=8, expansion=2.66):
-        super(RestormerMask, self).__init__()
+        super(AdaptiveShadowMaskGenerator, self).__init__()
         self.mask_predictor = MaskPredictor(in_ch=1, out_ch=1, base_dim=16)
 
         self.conv_in = nn.Conv2d(1, base_dim, kernel_size=3, padding=1, bias=True)
@@ -200,7 +201,7 @@ class RestormerMask(nn.Module):
 
 if __name__ == '__main__':
     input_tensor = torch.randn(1, 1, 512, 512).cuda()
-    model = RestormerMask().cuda()
+    model = AdaptiveShadowMaskGenerator().cuda()
     output = model(input_tensor).cuda()
     print(f'Input size: {input_tensor.size()}')
     print(f'Output size: {output.size()}')

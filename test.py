@@ -51,7 +51,7 @@ def test():
     )
 
     # Model & Metrics
-    model = Model(use_document_boundary=opt.MODEL.USE_DOCUMENT_BOUNDARY)
+    model = Model()
     load_checkpoint(model, opt.TESTING.WEIGHT)
 
     model, testloader = accelerator.prepare(model, testloader)

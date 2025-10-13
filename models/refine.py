@@ -255,8 +255,9 @@ class Up(nn.Module):
         return self.conv(x)
 
 
-class RefineUNetCoord(nn.Module):
+class DocumentAwareRefinementNetwork(nn.Module):
     """
+    Document-Aware Refinement Network (DARN)
     U-Net + CoordAttention + DocumentBoundaryAttention 版本
     输入: [B, 5, H, W]
     输出: [B, 3, H, W]
@@ -264,7 +265,7 @@ class RefineUNetCoord(nn.Module):
     文档边界注意力模块已默认集成
     """
     def __init__(self, bilinear=True):
-        super(RefineUNetCoord, self).__init__()
+        super(DocumentAwareRefinementNetwork, self).__init__()
 
         # 编码路径
         self.enc1 = DoubleConv(5, 64)       # 5 -> 64
@@ -314,7 +315,6 @@ class RefineUNetCoord(nn.Module):
 # ====================== 测试 ======================
 if __name__ == '__main__':
     x = torch.randn(1, 5, 512, 512)  # 输入: [B, 5, H, W]
-    model = RefineUNetCoord(bilinear=True)
     y = model(x)
     print(f'Input: {x.shape}')
     print(f'Output: {y.shape}')

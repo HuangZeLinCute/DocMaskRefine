@@ -17,15 +17,15 @@ TRAINING:
   VAL_AFTER_EVERY: 1
   PS_W: 512
   PS_H: 512
-  TRAIN_DIR: './dataset/RDD/train'
+  TRAIN_DIR: './dataset/Kligler/train'
   VAL_DIR: './dataset/Kligler/test'
-  SAVE_DIR: './checkpoints/RDD/models/base'
+  SAVE_DIR: './checkpoints/Kligler/models/base'
   ORI: False
-  RESUME: ''
+  RESUME: './Kligler_epoch_42.pth'  # 从最佳checkpoint继续 (RMSE 9.592)
   NUM_WORKERS: 16
   VAL_BATCH_SIZE: 4
   VAL_NUM_WORKERS: 4
-  PATIENCE: 20
+  PATIENCE: 30
 
 LOSS:
   TYPE: 'CUSTOM'
@@ -33,22 +33,15 @@ LOSS:
     CUSTOM:
       MSE_WEIGHT: 1.0
       SSIM_WEIGHT: 0.3
-      EDGE_WEIGHT: 0.7
-      GRADIENT_WEIGHT: 0.4
-      BOUNDARY_WEIGHT: 0.9
-      PERCEPTUAL_WEIGHT: 0.2
-      HISTOGRAM_WEIGHT: 0.2
-      TRANSPARENCY_WEIGHT: 0.1
+      FADE_WIDTH: 10
+      MIN_ALPHA: 0.3
 
 LOSS_SCHEDULER:
-  ENABLE: true
-  PRESET: 'shadow_removal'
-  ADAPTIVE_PATIENCE: 5
-  ADAPTIVE_FACTOR: 0.8
-  VERBOSE: true
+  ENABLE: true             # 开启微调阶段: true=启用调度器, false=使用固定权重
 
 TESTING:
   WEIGHT: "./checkpoints/Kligler/models/base/Kligler_epoch_43.pth"
   SAVE_IMAGES: True
   BATCH_SIZE: 4
   NUM_WORKERS: 4
+

@@ -10,6 +10,9 @@ OPTIM:
   NUM_EPOCHS: 300
   LR_INITIAL: 2e-4
   LR_MIN: 1e-6
+  # 微调阶段学习率 (当LOSS_SCHEDULER.ENABLE=true时自动使用)
+  FINE_TUNE_LR_INITIAL: 2e-5    # 微调学习率 (降低10倍)
+  FINE_TUNE_LR_MIN: 2e-7        # 微调最小学习率 (降低5倍)
   SEED: 3407
   WANDB: False
 

@@ -94,75 +94,44 @@ class Config(object):
         # 各种损失权重配置
         self._C.LOSS.CONFIGS = CN()
         
-        # 默认配置
+        # 默认配置 - 只保留MSE和SSIM
         self._C.LOSS.CONFIGS.DEFAULT = CN()
+        self._C.LOSS.CONFIGS.DEFAULT.MSE_WEIGHT = 1.0
         self._C.LOSS.CONFIGS.DEFAULT.SSIM_WEIGHT = 0.2
-        self._C.LOSS.CONFIGS.DEFAULT.EDGE_WEIGHT = 0.3
-        self._C.LOSS.CONFIGS.DEFAULT.GRADIENT_WEIGHT = 0.1
-        self._C.LOSS.CONFIGS.DEFAULT.BOUNDARY_WEIGHT = 0.5
-        self._C.LOSS.CONFIGS.DEFAULT.TRANSPARENCY_WEIGHT = 0.0  # 默认不启用
-        self._C.LOSS.CONFIGS.DEFAULT.PERCEPTUAL_WEIGHT = 0.05   # 感知损失权重
-        self._C.LOSS.CONFIGS.DEFAULT.HISTOGRAM_WEIGHT = 0.02    # 直方图损失权重
-        self._C.LOSS.CONFIGS.DEFAULT.FADE_WIDTH = 10
-        self._C.LOSS.CONFIGS.DEFAULT.MIN_ALPHA = 0.3
         
         # 强化边缘配置 - 解决黑边问题
         self._C.LOSS.CONFIGS.STRONG_EDGE = CN()
         self._C.LOSS.CONFIGS.STRONG_EDGE.SSIM_WEIGHT = 0.15
-        self._C.LOSS.CONFIGS.STRONG_EDGE.EDGE_WEIGHT = 0.5
-        self._C.LOSS.CONFIGS.STRONG_EDGE.GRADIENT_WEIGHT = 0.2
-        self._C.LOSS.CONFIGS.STRONG_EDGE.BOUNDARY_WEIGHT = 0.8
-        self._C.LOSS.CONFIGS.STRONG_EDGE.TRANSPARENCY_WEIGHT = 0.0  # 暂时不启用
         self._C.LOSS.CONFIGS.STRONG_EDGE.FADE_WIDTH = 10
         self._C.LOSS.CONFIGS.STRONG_EDGE.MIN_ALPHA = 0.3
         
         # 透明边缘配置 - 专门解决黑边透明化
         self._C.LOSS.CONFIGS.TRANSPARENT_EDGE = CN()
         self._C.LOSS.CONFIGS.TRANSPARENT_EDGE.SSIM_WEIGHT = 0.15
-        self._C.LOSS.CONFIGS.TRANSPARENT_EDGE.EDGE_WEIGHT = 0.4
-        self._C.LOSS.CONFIGS.TRANSPARENT_EDGE.GRADIENT_WEIGHT = 0.2
-        self._C.LOSS.CONFIGS.TRANSPARENT_EDGE.BOUNDARY_WEIGHT = 0.6
-        self._C.LOSS.CONFIGS.TRANSPARENT_EDGE.TRANSPARENCY_WEIGHT = 0.4  # 启用透明度损失
         self._C.LOSS.CONFIGS.TRANSPARENT_EDGE.FADE_WIDTH = 15
         self._C.LOSS.CONFIGS.TRANSPARENT_EDGE.MIN_ALPHA = 0.2
         
         # 平滑优先配置
         self._C.LOSS.CONFIGS.SMOOTH_PRIORITY = CN()
         self._C.LOSS.CONFIGS.SMOOTH_PRIORITY.SSIM_WEIGHT = 0.3
-        self._C.LOSS.CONFIGS.SMOOTH_PRIORITY.EDGE_WEIGHT = 0.2
-        self._C.LOSS.CONFIGS.SMOOTH_PRIORITY.GRADIENT_WEIGHT = 0.3
-        self._C.LOSS.CONFIGS.SMOOTH_PRIORITY.BOUNDARY_WEIGHT = 0.4
-        self._C.LOSS.CONFIGS.SMOOTH_PRIORITY.TRANSPARENCY_WEIGHT = 0.2
         self._C.LOSS.CONFIGS.SMOOTH_PRIORITY.FADE_WIDTH = 12
         self._C.LOSS.CONFIGS.SMOOTH_PRIORITY.MIN_ALPHA = 0.4
         
         # 轻量配置
         self._C.LOSS.CONFIGS.LIGHTWEIGHT = CN()
         self._C.LOSS.CONFIGS.LIGHTWEIGHT.SSIM_WEIGHT = 0.2
-        self._C.LOSS.CONFIGS.LIGHTWEIGHT.EDGE_WEIGHT = 0.1
-        self._C.LOSS.CONFIGS.LIGHTWEIGHT.GRADIENT_WEIGHT = 0.05
-        self._C.LOSS.CONFIGS.LIGHTWEIGHT.BOUNDARY_WEIGHT = 0.2
-        self._C.LOSS.CONFIGS.LIGHTWEIGHT.TRANSPARENCY_WEIGHT = 0.1
         self._C.LOSS.CONFIGS.LIGHTWEIGHT.FADE_WIDTH = 8
         self._C.LOSS.CONFIGS.LIGHTWEIGHT.MIN_ALPHA = 0.5
         
         # 简化边缘配置 - 专注于核心边缘处理
         self._C.LOSS.CONFIGS.SIMPLE_EDGE = CN()
         self._C.LOSS.CONFIGS.SIMPLE_EDGE.SSIM_WEIGHT = 0.2
-        self._C.LOSS.CONFIGS.SIMPLE_EDGE.EDGE_WEIGHT = 0.4
-        self._C.LOSS.CONFIGS.SIMPLE_EDGE.GRADIENT_WEIGHT = 0.3  # 重点：高梯度权重
-        self._C.LOSS.CONFIGS.SIMPLE_EDGE.BOUNDARY_WEIGHT = 0.0  # 不使用边界损失
-        self._C.LOSS.CONFIGS.SIMPLE_EDGE.TRANSPARENCY_WEIGHT = 0.0  # 不使用透明度损失
         self._C.LOSS.CONFIGS.SIMPLE_EDGE.FADE_WIDTH = 10
         self._C.LOSS.CONFIGS.SIMPLE_EDGE.MIN_ALPHA = 0.3
         
         # 背景平衡配置 - 平衡背景一致性和边缘处理
         self._C.LOSS.CONFIGS.BACKGROUND_BALANCED = CN()
         self._C.LOSS.CONFIGS.BACKGROUND_BALANCED.SSIM_WEIGHT = 0.15  # 降低SSIM，为背景模块让路
-        self._C.LOSS.CONFIGS.BACKGROUND_BALANCED.EDGE_WEIGHT = 0.5   # 提高边缘权重，对抗背景模块的平滑效应
-        self._C.LOSS.CONFIGS.BACKGROUND_BALANCED.GRADIENT_WEIGHT = 0.4  # 提高梯度权重，强化边缘去除
-        self._C.LOSS.CONFIGS.BACKGROUND_BALANCED.BOUNDARY_WEIGHT = 0.0
-        self._C.LOSS.CONFIGS.BACKGROUND_BALANCED.TRANSPARENCY_WEIGHT = 0.0
         self._C.LOSS.CONFIGS.BACKGROUND_BALANCED.FADE_WIDTH = 10
         self._C.LOSS.CONFIGS.BACKGROUND_BALANCED.MIN_ALPHA = 0.3
         
@@ -170,38 +139,12 @@ class Config(object):
         self._C.LOSS.CONFIGS.CUSTOM = CN()
         self._C.LOSS.CONFIGS.CUSTOM.MSE_WEIGHT = 1.0
         self._C.LOSS.CONFIGS.CUSTOM.SSIM_WEIGHT = 0.2
-        self._C.LOSS.CONFIGS.CUSTOM.EDGE_WEIGHT = 0.3
-        self._C.LOSS.CONFIGS.CUSTOM.GRADIENT_WEIGHT = 0.1
-        self._C.LOSS.CONFIGS.CUSTOM.BOUNDARY_WEIGHT = 0.5
-        self._C.LOSS.CONFIGS.CUSTOM.TRANSPARENCY_WEIGHT = 0.0
-        self._C.LOSS.CONFIGS.CUSTOM.PERCEPTUAL_WEIGHT = 0.05
-        self._C.LOSS.CONFIGS.CUSTOM.HISTOGRAM_WEIGHT = 0.02
-
         self._C.LOSS.CONFIGS.CUSTOM.FADE_WIDTH = 10
         self._C.LOSS.CONFIGS.CUSTOM.MIN_ALPHA = 0.3
 
-        # 损失权重调度器配置
+        # 损失权重调度器配置 - 微调阶段开关
         self._C.LOSS_SCHEDULER = CN()
-        self._C.LOSS_SCHEDULER.ENABLE = False                    # 是否启用损失调度器
-        self._C.LOSS_SCHEDULER.PRESET = 'shadow_removal'         # 预设类型
-        self._C.LOSS_SCHEDULER.ADAPTIVE_PATIENCE = 5             # 自适应调整的耐心值
-        self._C.LOSS_SCHEDULER.ADAPTIVE_FACTOR = 0.8             # 自适应调整因子
-        self._C.LOSS_SCHEDULER.VERBOSE = True                    # 是否打印调整信息
-        
-        # 自定义配置覆盖 - 预定义所有可能的损失类型
-        self._C.LOSS_SCHEDULER.OVERRIDES = CN()
-        
-        # 为每种损失类型预定义配置结构
-        for loss_type in ['mse', 'ssim', 'edge', 'gradient', 'boundary', 'transparency', 'perceptual', 'histogram']:
-            self._C.LOSS_SCHEDULER.OVERRIDES[loss_type] = CN()
-            self._C.LOSS_SCHEDULER.OVERRIDES[loss_type].schedule_type = ""
-            self._C.LOSS_SCHEDULER.OVERRIDES[loss_type].initial_weight = 0.0
-            self._C.LOSS_SCHEDULER.OVERRIDES[loss_type].final_weight = 0.0
-            self._C.LOSS_SCHEDULER.OVERRIDES[loss_type].start_epoch = 1
-            self._C.LOSS_SCHEDULER.OVERRIDES[loss_type].warmup_epochs = 10
-            self._C.LOSS_SCHEDULER.OVERRIDES[loss_type].decay_rate = 0.95
-            self._C.LOSS_SCHEDULER.OVERRIDES[loss_type].step_size = 30
-            self._C.LOSS_SCHEDULER.OVERRIDES[loss_type].step_gamma = 0.5
+        self._C.LOSS_SCHEDULER.ENABLE = False                    # 微调阶段开关: true=启用调度器, false=使用固定权重
 
         self._C.TESTING = CN()
         self._C.TESTING.WEIGHT = None
@@ -243,24 +186,9 @@ class Config(object):
             loss_config = {
                 'mse_weight': getattr(config, 'MSE_WEIGHT', 1.0),
                 'ssim_weight': config.SSIM_WEIGHT,
-                'edge_weight': config.EDGE_WEIGHT,
-                'gradient_weight': config.GRADIENT_WEIGHT,
-                'boundary_weight': config.BOUNDARY_WEIGHT,
-                'transparency_weight': config.TRANSPARENCY_WEIGHT,
                 'fade_width': config.FADE_WIDTH,
                 'min_alpha': config.MIN_ALPHA
             }
-            
-            # 添加新的损失权重（如果存在）
-            if hasattr(config, 'PERCEPTUAL_WEIGHT'):
-                loss_config['perceptual_weight'] = config.PERCEPTUAL_WEIGHT
-            else:
-                loss_config['perceptual_weight'] = 0.05  # 默认值
-                
-            if hasattr(config, 'HISTOGRAM_WEIGHT'):
-                loss_config['histogram_weight'] = config.HISTOGRAM_WEIGHT
-            else:
-                loss_config['histogram_weight'] = 0.02  # 默认值
                 
             return loss_config
         else:
@@ -270,12 +198,6 @@ class Config(object):
             return {
                 'mse_weight': getattr(config, 'MSE_WEIGHT', 1.0),
                 'ssim_weight': config.SSIM_WEIGHT,
-                'edge_weight': config.EDGE_WEIGHT,
-                'gradient_weight': config.GRADIENT_WEIGHT,
-                'boundary_weight': config.BOUNDARY_WEIGHT,
-                'transparency_weight': config.TRANSPARENCY_WEIGHT,
-                'perceptual_weight': getattr(config, 'PERCEPTUAL_WEIGHT', 0.05),
-                'histogram_weight': getattr(config, 'HISTOGRAM_WEIGHT', 0.02),
                 'fade_width': config.FADE_WIDTH,
                 'min_alpha': config.MIN_ALPHA
             }

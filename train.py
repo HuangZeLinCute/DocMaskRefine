@@ -152,7 +152,7 @@ def train():
         os.makedirs(opt.TRAINING.SAVE_DIR, exist_ok=True)
 
     # 数据加载
-    train_dataset = get_data(opt.TRAINING.TRAIN_DIR, opt.MODEL.INPUT, opt.MODEL.TARGET, 'test', opt.TRAINING.ORI,
+    train_dataset = get_data(opt.TRAINING.TRAIN_DIR, opt.MODEL.INPUT, opt.MODEL.TARGET, 'train', opt.TRAINING.ORI,
                              {'w': opt.TRAINING.PS_W, 'h': opt.TRAINING.PS_H})
     trainloader = DataLoader(dataset=train_dataset, batch_size=opt.OPTIM.BATCH_SIZE, shuffle=True,
                              num_workers=opt.TRAINING.NUM_WORKERS, drop_last=False, pin_memory=True)
@@ -298,14 +298,8 @@ def train():
                 # forward
                 res = model(gray, inp)
 
-                # 使用改进的损失函数（包含感知和直方图损失）
-                # 可以选择是否使用阴影掩码来计算边界损失
-                # 选项1: 不使用阴影掩码（更简单，推荐开始时使用）
-                train_loss, loss_mse, loss_ssim, loss_edge, loss_gradient, loss_boundary, loss_transparency, loss_perceptual, loss_histogram = criterion(res, tar)
-                
-                # 选项2: 使用灰度图作为粗略的阴影掩码（如果需要边界损失）
-                # shadow_mask = (gray < 0.5).float()  # 将暗区域作为阴影
-                # train_loss, loss_mse, loss_ssim, loss_edge, loss_gradient, loss_boundary, loss_transparency, loss_perceptual, loss_histogram = criterion(res, tar, shadow_mask)
+                # 使用简化的损失函数（只包含MSE和SSIM）
+                train_loss, loss_mse, loss_ssim = criterion(res, tar)
 
                 # backward
                 accelerator.backward(train_loss)
